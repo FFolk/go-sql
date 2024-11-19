@@ -164,3 +164,37 @@ func GetCountryx() ([]Countryx, error) {
 		return cuntries, nil
 	}
 }
+
+func GetCountryByIDx(idx int) (*Countryx, error) {
+	db, err := getConnectionx()
+	if err != nil {
+		return nil, err
+	}
+
+	contry := Countryx{}
+	query := "select * from country where idx = ?"
+	err = db.Get(&contry, query, idx)
+	if err != nil {
+		return nil, err
+	}
+	return &contry, err
+
+}
+
+func AddCountryx(country *Country) (int64, error) {
+	db, err := getConnectionx()
+	if err != nil {
+		return -1, err
+	}
+	sql := "insert into country (name) values (:name)"
+	result, err := db.NamedExec(sql, country)
+	if err != nil {
+		return -1, err
+	}
+	affeted, err := result.RowsAffected()
+	if affeted >= 0 {
+		return affeted, nil
+	} else {
+		return -1, err
+	}
+}
